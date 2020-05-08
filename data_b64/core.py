@@ -17,7 +17,7 @@ class Media2B64:
 			return f(data)
 		return f(self.data)
 
-	def download_file(self, source: str = str(), chunk: int = 1024) -> bytes:
+	def download_file(self, source: str, chunk: int = 1024) -> bytes:
 		""" a method to download files from online to bytes """
 		file = bytes()
 		r = request.urlopen(source)
@@ -28,11 +28,17 @@ class Media2B64:
 			file += part
 		return file
 
+	def read_file(self, source: str) -> bytes:
+		""" read local file bytes """
+		with open(source, 'rb') as fobj:
+			return fobj.read()
+
 """
 #### tests ####
 b64_strings = 'dGVzdA=='
 string = b'test'
 image_online = 'https://upload.wikimedia.org/wikipedia/en/9/95/Test_image.jpg'
-r = Media2B64().download_file(image_online)
+image_local = 'Test_image.jpg'
+r = Media2B64().read_file(image_local)
 print(r)
 """
