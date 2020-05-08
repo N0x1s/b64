@@ -18,7 +18,7 @@ class Media2B64:
 			return f(data)
 		return f(self.data)
 
-	def download_file(self, source: str, chunk: int = 1024) -> bytes:
+	def _download_file(self, source: str, chunk: int = 1024) -> bytes:
 		""" a method to download files from online to bytes """
 		file = bytes()
 		if not source:
@@ -31,20 +31,24 @@ class Media2B64:
 			file += part
 		return file
 
-	def read_file(self, source: str) -> bytes:
+	def _read_file(self, source: str) -> bytes:
 		""" read local file bytes """
 		if not source:
 			source = self.source
 		with open(source, 'rb') as fobj:
 			return fobj.read()
 
-	def detect_type(self, source: str or bytes) -> bool:
-		"""a method to detect the source type"""
+	def read_data(self, source: str or bytes, **kw) -> bytes:
+		return self._detect_type(source)(source, **kw)
+
+	def _detect_type(self, source: str or bytes) -> bool:
+		"""a method to detect the source type and return the function for it"""
+		source = source if source else self.source
 		if isinstance(source, bytes):
-			return 'bytes'
+			return bytes
 		elif parse.urlparse(source).scheme:
-			return 'remote'
-		return 'local'
+			return self._download_file
+		return self._read_file
 
 
 #### tests ####
@@ -52,5 +56,5 @@ b64_strings = 'dGVzdA=='
 string = b'test'
 image_online = 'https://upload.wikimedia.org/wikipedia/en/9/95/Test_image.jpg'
 image_local = 'Test_image.jpg'
-r = Media2B64().detect_type(image_local)
+r = Media2B64().read_data(image_online)
 print(r)
