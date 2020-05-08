@@ -1,5 +1,6 @@
 import base64
 from urllib import request
+from urllib import parse
 
 class Media2B64:
 	""" a class to convert online/offline media to base64"""
@@ -20,6 +21,8 @@ class Media2B64:
 	def download_file(self, source: str, chunk: int = 1024) -> bytes:
 		""" a method to download files from online to bytes """
 		file = bytes()
+		if not source:
+			source = self.source
 		r = request.urlopen(source)
 		while True:
 			part = r.read(chunk)
@@ -30,15 +33,24 @@ class Media2B64:
 
 	def read_file(self, source: str) -> bytes:
 		""" read local file bytes """
+		if not source:
+			source = self.source
 		with open(source, 'rb') as fobj:
 			return fobj.read()
 
-"""
+	def detect_type(self, source: str or bytes) -> bool:
+		"""a method to detect the source type"""
+		if isinstance(source, bytes):
+			return 'bytes'
+		elif parse.urlparse(source).scheme:
+			return 'remote'
+		return 'local'
+
+
 #### tests ####
 b64_strings = 'dGVzdA=='
 string = b'test'
 image_online = 'https://upload.wikimedia.org/wikipedia/en/9/95/Test_image.jpg'
 image_local = 'Test_image.jpg'
-r = Media2B64().read_file(image_local)
+r = Media2B64().detect_type(image_local)
 print(r)
-"""
