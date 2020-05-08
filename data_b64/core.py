@@ -1,7 +1,9 @@
 import base64
+import urllib
+
 class Media2B64:
     """ a class to convert online/offline media to base64"""
-    __version__ = '0.1'
+    __version__ = '0.2'
 
     def __init__(self, source:str = str()):
         if source:
@@ -15,6 +17,9 @@ class Media2B64:
             return f(data)
         return f(self.data)
 
+    def download_file(self, source: str = None) -> bytes:
+        """ a method to download files from online to bytes """
+        pass
 """
 #### tests ####
 b64_strings = 'dGVzdA=='
