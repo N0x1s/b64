@@ -12,24 +12,36 @@ class FileNotFound(Exception):
 
 class Media2B64:
 	""" a class to convert online/offline media to base64"""
-	__version__ = '0.2'
+	__version__ = '0.3a'
 
-	def __init__(self, source:str = str(), **kw):
+	def __init__(self, source:str = str(), *args, **kw):
 		if source:
 			if not self._exists(source):
 				raise FileNotFound
-			self.data = self.read_data(source, **kw)
 			self.dtype = self._detect_type(source)
+			self.data = self.read_data(source, *args, **kw)
 
-	def convert_to(self, destination: str, data: bytes = bytes()) -> bytes:
+	def _transform(self, dest: str = 'base64', data: bytes = bytes()) -> bytes:
 		""" a method to handle conversation between base64 and bytes
 		destination parameter takes:
 		string to convert from base64 to string
 		b64, anything else to convert from bytes to base64"""
-		f = base64.b64decode if destination == 'string' else base64.b64encode
+		f = base64.b64decode if dest == 'string' else base64.b64encode
 		if data:
 			return f(data)
 		return f(self.data)
+
+	def convert_to(self, dest: str = 'base64', source=None, *args, **kwargs):
+		"""the function that the user call with the data"""
+		if source:
+			dtype = self._detect_type(source)
+			func = self._pickup_method(dtype)
+			return self._transform(data=func(source), *args, **kwargs)
+		return self._transform(data=self.data, *args, **kwargs)
+
+	def read_data(self, source: str or bytes, **kw) -> bytes:
+		""" a method to automatically read bytes based on the source """
+		return self._pickup_method(self.dtype)(source, **kw)
 
 	def _download_file(self, source: str, chunk: int = 1024) -> bytes:
 		""" a method to download files from online to bytes """
@@ -51,11 +63,6 @@ class Media2B64:
 		with open(source, 'rb') as fobj:
 			return fobj.read()
 
-	def read_data(self, source: str or bytes, **kw) -> bytes:
-		""" a method to automatically read bytes based on the source """
-		if source:
-			return self._pickup_method('local')(source, **kw)
-		return self._pickup_method('local')(self.source, **kw)
 
 	def _detect_type(self, source: str or bytes) -> str:
 		""" a method that detect data type """
@@ -70,14 +77,14 @@ class Media2B64:
 	def _pickup_method(self, dtype: str or bytes):
 		"""a method to pickup the right function for the data type"""
 		dtype = dtype if dtype else self.dtype
-		
+
 		if dtype == 'remote':
 			return self._download_file
 		elif dtype == 'local':
 			return self._read_file
 		return bytes
 
-	def exists(self, source: str or bytes, code: list = range(200,301)) -> bool:
+	def _exists(self, source: str or bytes, code: list = range(200,301)) -> bool:
 		""" check if the source exists """
 		dtype = self._detect_type(source)
 		if dtype == 'local':
@@ -89,11 +96,3 @@ class Media2B64:
 				return False
 			return r.status in code
 		return bool(source)
-
-#### tests ####
-b64_strings = 'dGVzdA=='
-string = b'test'
-image_online = 'https://upload.wikimedia.org/wikipedia/en/9/95/Test_image.jpg'
-image_local = 'Test_image.jpg'
-r = Media2B64().exists(b64_strings)
-print(r)
