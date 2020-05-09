@@ -8,7 +8,7 @@ data_b64 is a python module that convert media to base64
 
 ### Installation
 
-image_to_b64 requires [python3](https://python.org/)  to run.
+data_b64 requires [python3](https://python.org/)  to run.
 
 Install the dependencies.
 
