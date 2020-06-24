@@ -8,7 +8,7 @@ setup(
     author='n0x1s',
     author_email='n0x1s0x01@gmail.com',
     url='https://github.com/n0x1s/data_b64',
-    download_url='https://github.com/N0x1s/data_b64/archive/0.1.tar.gz',
+    download_url='https://github.com/N0x1s/data_b64/archive/0.2.tar.gz',
     keywords=['base64', 'image to base64', 'video to base64',
               'base64 convert'],
     classifiers=[
