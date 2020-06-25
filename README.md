@@ -1,4 +1,3 @@
-
 # b64!
 [![Python 3.7.1](https://img.shields.io/badge/Python-3.7.1-green.svg)](http://www.python.org/download/)
 
@@ -19,8 +18,8 @@ pip install b64
 ```
 2) from the source code
 ```bash
-git clone https://github.com/n0x1s/data_b64
-cd data_b64
+git clone https://github.com/n0x1s/b64
+cd b64
 python setup.py install
 ```
 ## How to use
