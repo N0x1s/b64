@@ -10,6 +10,7 @@ what b64 do for you?
 * convert base64 to data (image, video, text)
 * auto-detect source type all you have to do is inserting the source
 * support proxies, custom success code
+* convert data to html(base64) tags, and data_uri
 ## install
 You can either install from pypi or the source code
 1) Using pip
