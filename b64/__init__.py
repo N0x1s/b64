@@ -1,1 +1,4 @@
-from .core import B64
+from .core import (
+	B64,
+	Tag64
+)

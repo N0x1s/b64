@@ -1,3 +1,4 @@
+
 # b64!
 [![Python 3.7.1](https://img.shields.io/badge/Python-3.7.1-green.svg)](http://www.python.org/download/)
 
@@ -23,7 +24,7 @@ cd data_b64
 python setup.py install
 ```
 ## How to use
-
+### 1) Converting local/remote images/text ... to base64 and the opposite
 Let us suppose you have a group of data that you want to convert to base64 or the opposite
 ```python
 >>> from b64 import B64
@@ -48,6 +49,16 @@ Let us suppose you have a group of data that you want to convert to base64 or th
 > b'iVBORw0KGgoAAAANSUhEUgAAAcwAAAHMCAYAAABY25iGA...'
 >>> B64('example.txt', to='string').data # converting local base64 string to bytes
 > b'Hello'
+```
+### 2) convert videos/images/css/js ... to html tag
+```python
+>>> from b64 import Tag64
+>>> t = Tag64('https://avatars3.githubusercontent.com/u/1', 'img')
+>>> t.html_tag
+> '<img src="data:;base64,/9j/4AAQSkZJRgABAQAAAQA...'
+>>> t.data_uri
+> b'iVBORw0KGgoAAAANSUhEUgAAAcwAAAHMCAYAAABY25iGA...'
+
 ```
 ## Todo
 I will try to maintain this respiratory and update or add new things to it you are welcome to contribute :relaxed:

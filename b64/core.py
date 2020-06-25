@@ -1,7 +1,7 @@
-from b64 import utils
 import base64
-from urllib import parse
+from b64 import utils
 from cached_properties import Property as property
+from bs4 import BeautifulSoup
 
 
 class B64:
@@ -25,7 +25,7 @@ class B64:
 			if not self.source:
 				raise utils.FileNotFound
 			return self.source
-		elif parse.urlparse(self.source).scheme:
+		elif utils.fix_url(self.source, True).scheme:
 			r = utils.download_file(self.source, *self._args, **self._kwargs)
 			del self._args, self._kwargs
 			return r
@@ -34,3 +34,39 @@ class B64:
 	@property
 	def data(self):
 		return self.convert()
+
+
+class Tag64:
+	""" convert html, css, images tags, to html(base64) """
+	__version__ = '0.1'
+	def __init__(self, source, tag=None, mime=None, tag_attr={}):
+		self.source = source
+		self.tag = tag
+		self.mime = mime
+		self.tag_attr = tag_attr
+
+	@property(timeout=3600)
+	def b64_string(self):
+		return B64(self.source).data.decode('utf-8')
+
+	@property
+	def data_uri(self):
+		return f'data:{self.mime if self.mime else ""};base64,{self.b64_string}'
+
+	@property
+	def attr(self):
+		if self.tag == 'link':
+			return 'href'
+		elif self.tag == 'object':
+			return 'data'
+		return 'src'
+
+	@property
+	def html_tag(self):
+		t = self.soup_contractor.new_tag(name=self.tag,
+			**{self.attr:self.data_uri}, **self.tag_attr)
+		return str(t) # t
+
+	@property(general=True)
+	def soup_contractor(self):
+		return BeautifulSoup(features='lxml')
